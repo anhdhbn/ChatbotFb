@@ -14,11 +14,14 @@ using Newtonsoft.Json.Linq;
 using static MessengerBot.Models.FbBotDataClasses;
 using System.Web.Script.Serialization;
 using System.Configuration;
+using Model.Dao;
+using Model;
 
 namespace MessengerBot.Controllers
 {
 	public class WebhookController : ApiController
 	{
+        private string TextEnd = ConfigurationManager.AppSettings["TextEnd"];
         public HttpResponseMessage Get()
 		{
 			var querystrings = Request.GetQueryNameValuePairs().ToDictionary(x => x.Key, x => x.Value);
@@ -50,48 +53,47 @@ namespace MessengerBot.Controllers
 
 			foreach (var item in value.entry[0].messaging)
 			{
-				if (item.message == null && item.postback == null)
+                long id = long.Parse(item.sender.id);
+				if (item.message == null && item.postback == null || id == 1059659984213576)
 					continue;
 				else
-                {                    
-                    if(item.message.attachments == null)
+                {
+                    bool chatting = new ChattingUserDao().IsChatting(id);
+                    if(chatting)
                     {
-                        var tempMess = item.message;
-                        tempMess.seq = null;
-                        tempMess.mid = null;
-                        var json = new
-                        {
-                            message = tempMess,
-                            recipient = new { id = item.sender.id }
-                        };
-
-                        var result = helper.RemoveNull(json);
-                        var jsonObj = JObject.Parse(result);
-                        await helper.SendMessage(jsonObj);
+                        await helper.Chatting(item);
                     }
                     else
                     {
-                        foreach (var att in item.message.attachments)
+                        bool IsExist = new QueueUserDao().IsExist(id);
+                        if (IsExist == false)
                         {
-                            var tempMess = item.message;
-                            tempMess.seq = null;
-                            tempMess.mid = null;
-                            tempMess.attachment = att;
-                            tempMess.attachments = null;
-                            if (tempMess.attachment.type == "fallback")
+                            new QueueUserDao().AddUser(id);
+                            await helper.SendBotMessage(helper.GetBotMessage(string.Format("Chào mừng bạn đến với hồ câu cá :3 Bấm kí tự bất kì để thả thính, bấm {0} để kết thúc.", TextEnd), id));
+                            return new HttpResponseMessage(HttpStatusCode.OK);
+                        }
+                        else
+                        {
+                            //new QueueUserDao().AddOrNotUser(long.Parse(item.sender.id));
+                            //new QueueUserDao().SetTrueStatus(long.Parse(item.sender.id));
+                            await helper.SendBotMessage(helper.GetBotMessage("Thả câu ...", "Đang tìm cá cho bạn thả thính...", id));
+                            List<QueueUser> list = new QueueUserDao().GetAllUser(id);
+                            if (list == null || list.Count <= 0)
+                                return new HttpResponseMessage(HttpStatusCode.OK);
+                            else
                             {
-                                tempMess.attachment = null;
+                                var IdOpp = list[new Random().Next(0, list.Count - 1)].ID;
+                                var dao = new ChattingUserDao();
+                                bool user1 = dao.IsChatting(long.Parse(item.sender.id));
+                                bool user2 = dao.IsChatting(IdOpp);
+                                if (user1 == false && user2 == false)
+                                {
+                                    new QueueUserDao().RemoveCoupleUser(long.Parse(item.sender.id), IdOpp);
+                                    new ChattingUserDao().AddCouple(long.Parse(item.sender.id), IdOpp);
+                                    await helper.SendBotMessage(helper.GetBotMessage("Done!", string.Format("Cá đã cắn câu, hãy tâm sự cùng người lạ đi nào :3 Gõ {0} để kết thúc.", TextEnd), id));
+                                    await helper.SendBotMessage(helper.GetBotMessage("Done!", string.Format("Cá đã cắn câu, hãy tâm sự cùng người lạ đi nào :3 Gõ {0} để kết thúc.", TextEnd), IdOpp));
+                                }
                             }
-
-                            var json = new
-                            {
-                                message = tempMess,
-                                recipient = new { id = item.sender.id }
-                            };
-
-                            var result = helper.RemoveNull(json);
-                            var jsonObj = JObject.Parse(result);
-                            await helper.SendMessage(jsonObj);
                         }
                     }
                 }

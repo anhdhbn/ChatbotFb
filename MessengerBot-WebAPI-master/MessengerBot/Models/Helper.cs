@@ -66,7 +66,7 @@ namespace MessengerBot.Models
             }
         }
 
-        private JObject GetBotMessage(string title, string content, string recipientId)
+        public JObject GetBotMessage(string title, string content, long recipientId)
         {
             ArrayList ar = new ArrayList();
             ar.Add(new
@@ -78,7 +78,7 @@ namespace MessengerBot.Models
             {
                 recipient = new
                 {
-                    id = recipientId
+                    id = recipientId.ToString()
                 },
                 message = new
                 {
@@ -95,13 +95,13 @@ namespace MessengerBot.Models
             });
         }
 
-        private JObject GetBotMessage(string content, string recipientId)
+        public JObject GetBotMessage(string content, long recipientId)
         {
             return JObject.FromObject(new
             {
                 recipient = new
                 {
-                    id = recipientId
+                    id = recipientId.ToString()
                 },
                 message = new
                 {
@@ -110,7 +110,7 @@ namespace MessengerBot.Models
             });
         }
 
-        private async Task SendBotMessage(JObject json)
+        public async Task SendBotMessage(JObject json)
         {
             string pageToken = ConfigurationManager.AppSettings["pageToken"];
             using (HttpClient client = new HttpClient())
@@ -120,17 +120,17 @@ namespace MessengerBot.Models
             }
         }
 
-        private async Task EndChat(long id, long IdOpponent)
+        public async Task EndChat(long id, long IdOpponent)
         {
-            await SendBotMessage(GetBotMessage("Bạn đã ngưng thả thính", "Gõ kí tự bất kì để thả thính", id.ToString()));
-            await SendBotMessage(GetBotMessage("Đối phương đã ngưng thả thính", "Gõ kí tự bất kì để thả thính", IdOpponent.ToString()));
+            await SendBotMessage(GetBotMessage("Bạn đã ngưng thả thính", "Gõ kí tự bất kì để thả thính", id));
+            await SendBotMessage(GetBotMessage("Đối phương đã ngưng thả thính", "Gõ kí tự bất kì để thả thính", IdOpponent));
             new ChattingUserDao().RemoveCouple(id, IdOpponent);
             new QueueUserDao().AddCouple(id, IdOpponent);
-            new QueueUserDao().SetFalseStatus(id);
-            new QueueUserDao().SetFalseStatus(IdOpponent);
+            //new QueueUserDao().SetFalseStatus(id);
+            //new QueueUserDao().SetFalseStatus(IdOpponent);
         }
 
-        private async Task Chatting(BotMessageReceivedRequest item)
+        public async Task Chatting(BotMessageReceivedRequest item)
         {
             long IdOpponent = new ChattingUserDao().GetOpponentID(long.Parse(item.sender.id));
             if (item.message.text == ConfigurationManager.AppSettings["textEnd"])

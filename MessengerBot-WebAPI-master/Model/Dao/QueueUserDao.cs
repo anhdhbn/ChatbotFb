@@ -17,7 +17,8 @@ namespace Model.Dao
 
         public List<QueueUser> GetAllUser(long id)
         {
-            var list = db.QueueUsers.Where(x => x.ID != id && x.Status == true);
+            //&& x.Status == true
+            var list = db.QueueUsers.Where(x => x.ID != id);
             return list.ToList();
         }
 
