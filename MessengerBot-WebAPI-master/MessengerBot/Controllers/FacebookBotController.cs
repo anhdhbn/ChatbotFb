@@ -13,9 +13,6 @@ namespace MessengerBot.Controllers
     public class FacebookBotController : Controller
     {
         // GET: FacebookBot
-
-        string pageToken = "EAADA0WnUOS4BAPsoOPbTAGtG3nLYHGXvEuiSaVyYa0l3RgXuOSnJTECv9AmcgVYTWZBaJ0ZBCLH1hZAYv5NyVHCCWuLpmzGjKOIhwWbQZCPDKl8WoBZC8nFQn8e3Y689d1bzQmgWyiuDJWxEkMaor4qcAyFdakT9eSGH5ttIVK7AnrmqQjajG";
-        string appSecret = "88d3dcdbc6e31b1b4bcbf245b6dd6bbf";
         public ActionResult Receive()
         {
             var query = Request.QueryString;

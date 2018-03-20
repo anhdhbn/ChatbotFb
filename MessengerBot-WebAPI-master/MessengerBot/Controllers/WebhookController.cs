@@ -19,8 +19,6 @@ namespace MessengerBot.Controllers
 {
 	public class WebhookController : ApiController
 	{
-        
-
         public HttpResponseMessage Get()
 		{
 			var querystrings = Request.GetQueryNameValuePairs().ToDictionary(x => x.Key, x => x.Value);
@@ -98,7 +96,6 @@ namespace MessengerBot.Controllers
                     }
                 }
             }
-
 			return new HttpResponseMessage(HttpStatusCode.OK);
 		}
     }
