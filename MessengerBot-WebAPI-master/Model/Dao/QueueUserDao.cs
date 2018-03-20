@@ -18,7 +18,7 @@ namespace Model.Dao
         public List<QueueUser> GetAllUser(long id)
         {
             //&& x.Status == true
-            var list = db.QueueUsers.Where(x => x.ID != id);
+            var list = db.QueueUsers.Where(x => x.ID != id && x.Status == true);
             return list.ToList();
         }
 
@@ -59,10 +59,14 @@ namespace Model.Dao
         {
             try
             {
-                var qu = new QueueUser();
-                qu.ID = id;
-                db.QueueUsers.Add(qu);
-                db.SaveChanges();
+                if(new ChattingUserDao().IsChatting(id) == false && IsExist(id))
+                {
+                    var qu = new QueueUser();
+                    qu.ID = id;
+                    db.QueueUsers.Add(qu);
+                    db.SaveChanges();
+                }
+                
 
             }
             catch (Exception ex)

@@ -23,3 +23,47 @@
     }
   ]
 }
+
+{
+	"object": "page",
+	"entry": [
+		{
+			"id": "1059659984213576",
+			"time": 1521557064931,
+			"messaging": [
+				{
+					"sender": {
+						"id": "1059659984213576"
+					},
+					"recipient": {
+						"id": "1995573513805720"
+					},
+					"timestamp": 1521557064485,
+					"message": {
+						"is_echo": true,
+						"app_id": 212005656213806,
+						"mid": "mid.$cAAOZOXJI3C1odSOTJViQ95KBjeC4",
+						"seq": 169616,
+						"attachments": [
+							{
+								"title": "Thả câu ...",
+								"url": null,
+								"type": "template",
+								"payload": {
+									"template_type": "generic",
+									"sharable": true,
+									"elements": [
+										{
+											"title": "Thả câu ...",
+											"subtitle": "Đang tìm cá cho bạn thả thính..."
+										}
+									]
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	]
+}

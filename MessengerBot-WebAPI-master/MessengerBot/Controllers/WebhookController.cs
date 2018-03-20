@@ -75,7 +75,7 @@ namespace MessengerBot.Controllers
                         else
                         {
                             //new QueueUserDao().AddOrNotUser(long.Parse(item.sender.id));
-                            //new QueueUserDao().SetTrueStatus(long.Parse(item.sender.id));
+                            new QueueUserDao().SetTrueStatus(id);
                             await helper.SendBotMessage(helper.GetBotMessage("Thả câu ...", "Đang tìm cá cho bạn thả thính...", id));
                             List<QueueUser> list = new QueueUserDao().GetAllUser(id);
                             if (list == null || list.Count <= 0)
@@ -84,12 +84,12 @@ namespace MessengerBot.Controllers
                             {
                                 var IdOpp = list[new Random().Next(0, list.Count - 1)].ID;
                                 var dao = new ChattingUserDao();
-                                bool user1 = dao.IsChatting(long.Parse(item.sender.id));
+                                bool user1 = dao.IsChatting(id);
                                 bool user2 = dao.IsChatting(IdOpp);
                                 if (user1 == false && user2 == false)
                                 {
-                                    new QueueUserDao().RemoveCoupleUser(long.Parse(item.sender.id), IdOpp);
-                                    new ChattingUserDao().AddCouple(long.Parse(item.sender.id), IdOpp);
+                                    new QueueUserDao().RemoveCoupleUser(id, IdOpp);
+                                    new ChattingUserDao().AddCouple(id, IdOpp);
                                     await helper.SendBotMessage(helper.GetBotMessage("Done!", string.Format("Cá đã cắn câu, hãy tâm sự cùng người lạ đi nào :3 Gõ {0} để kết thúc.", TextEnd), id));
                                     await helper.SendBotMessage(helper.GetBotMessage("Done!", string.Format("Cá đã cắn câu, hãy tâm sự cùng người lạ đi nào :3 Gõ {0} để kết thúc.", TextEnd), IdOpp));
                                 }

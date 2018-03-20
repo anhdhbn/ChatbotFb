@@ -126,8 +126,8 @@ namespace MessengerBot.Models
             await SendBotMessage(GetBotMessage("Đối phương đã ngưng thả thính", "Gõ kí tự bất kì để thả thính", IdOpponent));
             new ChattingUserDao().RemoveCouple(id, IdOpponent);
             new QueueUserDao().AddCouple(id, IdOpponent);
-            //new QueueUserDao().SetFalseStatus(id);
-            //new QueueUserDao().SetFalseStatus(IdOpponent);
+            new QueueUserDao().SetFalseStatus(id);
+            new QueueUserDao().SetFalseStatus(IdOpponent);
         }
 
         public async Task Chatting(BotMessageReceivedRequest item)
