@@ -59,7 +59,7 @@ namespace Model.Dao
         {
             try
             {
-                if(new ChattingUserDao().IsChatting(id) == false && IsExist(id))
+                if(new ChattingUserDao().IsChatting(id) == false && IsExist(id) == false)
                 {
                     var qu = new QueueUser();
                     qu.ID = id;
